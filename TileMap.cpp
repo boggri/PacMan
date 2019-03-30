@@ -9,7 +9,7 @@ int tileSize = 16;
 const int MapH = 31;
 const int MapW = 28;
 
-std::string String[MapH] = {
+std::string StringMap[MapH] = {
 
 	"WWWWWWWWWWWWWWWWWWWWWWWWWWWW",
 	"W............WW............W",
@@ -44,4 +44,4 @@ std::string String[MapH] = {
 	"WWWWWWWWWWWWWWWWWWWWWWWWWWWW"
 };
 
-std::string *Map = String;
+std::string *Map = StringMap;
