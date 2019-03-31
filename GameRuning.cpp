@@ -23,7 +23,7 @@ bool restartGame()
 		return 0; // break the loop
 	}
 
-	sf::RenderWindow window(sf::VideoMode(800, 900), "PacMan [Hrytsenok Bogdan]");
+	sf::RenderWindow window(sf::VideoMode(450, 500), "PacMan [Hrytsenok Bogdan]");
 	sf::Event event;
 	window.setVerticalSyncEnabled(true); // 60fps
 
