@@ -18,9 +18,12 @@ private:
 public:
 	Ghost(sf::Texture &image, std::string name);
 
-	float DistanceToPacMan(float FromX, float FromY, float PacX, float PacY); // Get distanse to PacMan coordinates from set sell 
-	void CeckThreeTiles(float pacX, float pacY); // pass float coordinates of PacMan
+	float DistanceToPacMan(float FromX, float FromY, float &PacX, float &PacY); // Get distanse to PacMan coordinates from set sell 
+	void FindTilesCachPac(float &pacX, float &pacY); // pass float coordinates of PacMan
 	void UpdateMove();
+	void CachCheck(int pacX, int pacY, bool &cached);
+	void GhostManager(float PacManX, float PacManY, bool &cached);
+
 	~Ghost();
 };
 

@@ -26,13 +26,15 @@ Ghost::Ghost(sf::Texture &image, std::string name)
 }
 
 
-float Ghost::DistanceToPacMan(float FromX, float FromY, float PacX, float PacY)
+float Ghost::DistanceToPacMan(float FromX, float FromY, float &PacX, float &PacY)
 {
 	return sqrt(powf(FromX - PacX, 2) + powf(FromY - PacY, 2));  // Distance between two points on the plane
 }
 
 
-void Ghost::CeckThreeTiles(float pacX, float pacY)
+
+
+void Ghost::FindTilesCachPac(float &pacX, float &pacY)
 {
 	if (!walk) //Start check only from waypoint
 	{
@@ -48,11 +50,6 @@ void Ghost::CeckThreeTiles(float pacX, float pacY)
 		int FrontTile
 			, LeftTile
 			, RightTile;
-
-		for (int i = 0; i < 4; i++)///////////////////////////////////////////////
-		{
-			move[i] = false;
-		}
 
 		// Calculate 3 cells to check. That depends of the current direction. Where the pacman looks
 		switch (currentDirection)
@@ -135,7 +132,6 @@ void Ghost::CeckThreeTiles(float pacX, float pacY)
 				DistRight = DistanceToPacMan(currX, RightTile, pacX, pacY);
 			}
 			
-
 			break;
 		case RIGHT:
 			FrontTilePos = rect.left + tileSize;
@@ -195,11 +191,12 @@ void Ghost::CeckThreeTiles(float pacX, float pacY)
 		{
 			move[currentDirection] = false; // Front tile is out
 			move[((currentDirection + 4) - 1) % 4] = false; // Left tile is out
-			currentDirection = ((currentDirection + 4) - 1) % 4; // Turn direction left to 90 degrees left
+			currentDirection = (currentDirection + 1) % 4; // Turn direction right to 90 degrees left
 		}
 
 	}
 }
+
 
 void Ghost::UpdateMove()
 {
@@ -242,7 +239,6 @@ void Ghost::UpdateMove()
 				rect.top = currSpoatTile;
 				walk = false;
 				move[UP] = false;
-				//currSpoatTile -= tileSize;
 				currY = rect.top / tileSize; // Update tile coordinates of ghost
 			}
 		}
@@ -301,10 +297,24 @@ void Ghost::UpdateMove()
 	{
 		sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X, SPRITE_RIGHT_Y, rect.width, rect.height)); // get sprite of pacman when it's not move
 	}
-
 }
 
 
+void Ghost::CachCheck(int pacX, int pacY, bool &cached)
+{
+	if (currX == pacX && currY == pacY)
+	{
+		cached = true;
+	}
+}
+
+
+void Ghost::GhostManager(float PacManX, float PacManY, bool &cached)
+{
+	FindTilesCachPac(PacManX, PacManY); // pass float coordinates of PacMan
+	UpdateMove();
+	CachCheck(PacManX, PacManY, cached);
+}
 
 Ghost::~Ghost()
 {

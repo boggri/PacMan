@@ -23,6 +23,13 @@ private:
 	const int SPRITE_UP_Y;
 	const int SPRITE_DOWN_Y;
 
+	///Private methods
+	void UpdateMove();
+	void GetDirection(); //PacMan control
+	void CheckForFuturePath();
+	void Collision();
+	void GetPillsAndPortals();
+
 public:
 	// if the Pacman is cached;
 	bool cached;
@@ -32,13 +39,8 @@ public:
 	//Constructor to set Texture
 	PacMan(sf::Texture &image, std::string name);
 
-	//Methods//
-	void UpdateMove();
-	void GetDirection(); //PacMan control
-	void CheckForFuturePath();
-	void Collision();
-	void GetPillsAndPortals();
-	void CachCheck(int ghostX, int ghostY);
+	///public Methods//
+	void Update(); // Include other methods
 	void AnimationDeath();
 
 	~PacMan();

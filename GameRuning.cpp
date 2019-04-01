@@ -9,12 +9,12 @@
 #include "Exit.h"
 #include "UpdateMap.h"
 
-void gameRuning() // This function restarts the game 
+void gameRuning() /// This function restarts the game 
 {
-	if (restartGame()) { gameRuning(); } // If startGame returns true, then recursin starts.
+	if (restartGame()) { gameRuning(); }// If startGame returns true, then recursin starts.
 }
 
-// This func runs the game and returns true for gameRuning() func to restart the game
+/// This func runs the game and returns true for gameRuning() func to restart the game
 bool restartGame()
 {
 	//If level file doesn't find stop the game  
@@ -37,10 +37,9 @@ bool restartGame()
 	Ghost ghost1(pacTexture, "Ghost1"); // Create Ghosts
 	Ghost ghost2(pacTexture, "Ghost2");
 
-	Exit exit(pacTexture, "Exit"); // Create exit
+	Exit exit(pacTexture, "Exit"); // Create exit key and end screeans
 
-	sf::RectangleShape rectangle(sf::Vector2f(16, 16)); //size of each map tile
-
+	sf::RectangleShape rectangle(sf::Vector2f(tileSize, tileSize)); //rectangles which have size of map tiles
 
 	while (window.isOpen())
 	{
@@ -56,19 +55,10 @@ bool restartGame()
 		// If player isn't dead and have not won yet
 		if (!player.cached && !player.win)
 		{
-			player.GetDirection(); // get user input if any
-			player.UpdateMove(); // move our PacMan
-			player.GetPillsAndPortals(); // Eat pills
+			player.Update(); //get user input, moving pacman and portals handling
 
-			ghost1.CeckThreeTiles(player.currX, player.currY); // Set next ditection
-			ghost1.UpdateMove(); // move
-
-			ghost2.CeckThreeTiles(player.currX, player.currY);
-			ghost2.UpdateMove();
-
-			// Check if the ghosts cached PacMan 
-			player.CachCheck(ghost1.currX, ghost1.currY);
-			player.CachCheck(ghost2.currX, ghost2.currY);
+			ghost1.GhostManager(player.currX, player.currY, player.cached); //// Set next ditection, move and check if the PacMan is cached by ghosts 
+			ghost2.GhostManager(player.currX, player.currY, player.cached);
 
 			window.clear(sf::Color::Black);
 			window.draw(map.sprite); // Draw map
@@ -80,7 +70,6 @@ bool restartGame()
 				window.draw(exit.sprite);
 				player.win = exit.CheckForExit(player.currX, player.currY);
 			}
-
 
 			window.draw(player.sprite); // Draw PacMan
 			window.draw(ghost1.sprite); // Draw Ghost

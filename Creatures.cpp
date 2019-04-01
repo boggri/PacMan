@@ -21,24 +21,24 @@ Creatures::Creatures(sf::Texture &image, std::string name):
 	}
 	else if (name == "Ghost1")
 	{
-		rect = sf::FloatRect(24, 104, 14, 14); //Start coordinates rect.left/rect.top for Ghost and hight/width of PacMan sprite
+		rect = sf::FloatRect(24, 104, 14, 14); //Start coordinates rect.left/rect.top for Ghost spawn and hight/width of Ghost sprite
 		sprite.setOrigin(sf::Vector2f(7, 7)); // shift origin of sprite
 		currentDirection = 0;
 	}
 	else if (name == "Ghost2")
 	{
-		rect = sf::FloatRect(440, 472, 14, 14); //Start coordinates rect.left/rect.top for Ghost and hight/width of PacMan sprite
+		rect = sf::FloatRect(440, 472, 14, 14); //Start coordinates rect.left/rect.top for Ghost spawn and hight/width of Ghost sprite
 		sprite.setOrigin(sf::Vector2f(7, 7)); // shift origin of sprite
 		currentDirection = 0;
 	}
 	else if (name == "Exit")
 	{
-		rect = sf::FloatRect(232, 376, 8, 14); //Start coordinates rect.left/rect.top for Ghost and hight/width of PacMan sprite
+		rect = sf::FloatRect(232, 376, 8, 14); //Start coordinates rect.left/rect.top for Key and hight/width of it sprite
 		sprite.setOrigin(sf::Vector2f(4, 7)); // shift origin of sprite
 	}
 	else if (name == "Win" || name == "Lose")
 	{
-		rect = sf::FloatRect(222, 230, 90, 16); //Start coordinates rect.left/rect.top for Ghost and hight/width of PacMan sprite
+		rect = sf::FloatRect(222, 230, 90, 16); //Start coordinates rect.left/rect.top for End screen and hight/width of it sprite
 		sprite.setOrigin(sf::Vector2f(45, 8)); // shift origin of sprite
 	}
 

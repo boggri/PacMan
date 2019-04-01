@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
-extern int H;
-extern int W;
+extern const int H;
+extern const int W;
 
-extern int tileSize;
+extern const int tileSize;
 
 extern std::string *Map;

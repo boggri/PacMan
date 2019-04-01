@@ -4,10 +4,7 @@
 
 class Creatures
 {
-public:
-	sf::Sprite sprite;
-	sf::FloatRect rect; // (rect.left, rect.top, width, hight) / Coordinates and size
-	
+protected:
 	///CONSTANTS///
 	// Creature walk animation
 	const float ANIMATION_SPEED;
@@ -23,6 +20,10 @@ public:
 
 	int currentDirection; // in what side creature moves 
 	int currSpoatTile; // next destination cell/tile 
+
+public:
+	sf::Sprite sprite;
+	sf::FloatRect rect; // (rect.left, rect.top, width, hight) / Coordinates and size
 
 	//Coordinates
 	int currX;

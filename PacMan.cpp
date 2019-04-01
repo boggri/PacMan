@@ -252,14 +252,6 @@ void PacMan::GetPillsAndPortals()
 	}
 }
 
-void PacMan::CachCheck(int ghostX, int ghostY)
-{
-	if (currX == ghostX && currY == ghostY)
-	{
-		cached = true;
-		currentFrame = 0;
-	}
-}
 
 void PacMan::AnimationDeath()
 {
@@ -271,6 +263,14 @@ void PacMan::AnimationDeath()
 		//Update animation
 		currentFrame += 0.45;
 	}
+}
+
+
+void PacMan::Update()
+{
+	GetDirection(); //PacMan control
+	UpdateMove();
+	GetPillsAndPortals();
 }
 
 PacMan::~PacMan()
