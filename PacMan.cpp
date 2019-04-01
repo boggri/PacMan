@@ -224,7 +224,7 @@ void PacMan::UpdateMove()
 }
 
 
-void PacMan::GetPillsAndPortals()
+void PacMan::GetPillsAndPortals(sf::Clock &clockB)
 {
 	if (!walk)
 	{
@@ -232,6 +232,12 @@ void PacMan::GetPillsAndPortals()
 		int Y = rect.top / tileSize;
 		if (Map[Y][X] == '.' || Map[Y][X] == '0')
 		{
+			if (Map[Y][X] == '0')
+			{
+				isBustMode = true;
+				clockB.restart();
+			}
+
 			Map[Y][X] = ' ';
 			pills++;
 		}	
@@ -252,6 +258,14 @@ void PacMan::GetPillsAndPortals()
 	}
 }
 
+void PacMan::BustTimerUpdate(float &timerBust)
+{
+	if (timerBust > 10) // Bust mode 10 sec
+	{  
+		isBustMode = false;
+	}
+}
+
 
 void PacMan::AnimationDeath()
 {
@@ -266,11 +280,20 @@ void PacMan::AnimationDeath()
 }
 
 
-void PacMan::Update()
+void PacMan::Update(sf::Clock &clockB, float &timerBust)
 {
 	GetDirection(); //PacMan control
 	UpdateMove();
-	GetPillsAndPortals();
+	GetPillsAndPortals(clockB);
+	
+	if (isBustMode)
+	{
+		BustTimerUpdate(timerBust);
+	}
+	else // keep this timer at zero;
+	{
+		clockB.restart();
+	}
 }
 
 PacMan::~PacMan()

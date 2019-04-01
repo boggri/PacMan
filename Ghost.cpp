@@ -3,7 +3,6 @@
 
 
 
-
 Ghost::Ghost(sf::Texture &image, std::string name)
 	///Initializer list///
 	////////////////////////////////////////////
@@ -22,7 +21,14 @@ Ghost::Ghost(sf::Texture &image, std::string name)
 	sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X, SPRITE_RIGHT_Y, rect.width, rect.height)); // get sprite of ghost when it's not move
 
 	sprite.setPosition(rect.left, rect.top); // set start position
+	
+	spriteXup = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 4;
+	spriteXdown = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 6;
+	spriteXsides = SPRITE_RIGHT_X;
+	spriteY = SPRITE_RIGHT_Y;
 
+	eatenByPacman = false;
+	timerDeath = 0;
 }
 
 
@@ -34,7 +40,7 @@ float Ghost::DistanceToPacMan(float FromX, float FromY, float &PacX, float &PacY
 
 
 
-void Ghost::FindTilesCachPac(float &pacX, float &pacY)
+void Ghost::FindTilesCachMod(float &pacX, float &pacY)
 {
 	if (!walk) //Start check only from waypoint
 	{
@@ -198,6 +204,75 @@ void Ghost::FindTilesCachPac(float &pacX, float &pacY)
 }
 
 
+void Ghost::FindTilesDoNotCachMod() // random path generator
+{
+	if (!walk)
+	{
+		srand(time(nullptr));
+		int Y;
+		int X;
+		bool findPath = true;
+		int reversDir;
+
+		reversDir = (currentDirection + 2) % 4; // 180 degrees (back tile) 
+		while (findPath)
+		{
+			currentDirection = rand() % 4;
+			
+			if (currentDirection != reversDir) // back tile is not allowed
+			{
+				switch (currentDirection)
+				{
+				case UP:
+					Y = (rect.top - tileSize) / tileSize;
+					X = currX;
+					if (!(Map[Y][X] == 'W' || Map[Y][X] == 'w' || Map[Y][X] == '&'))
+					{
+						findPath = false;
+						move[UP] = true;
+					}
+					break;
+
+				case DOWN:
+					Y = (rect.top + tileSize) / tileSize;
+					X = currX;
+					if (!(Map[Y][X] == 'W' || Map[Y][X] == 'w' || Map[Y][X] == '&'))
+					{
+						findPath = false;
+						move[DOWN] = true;
+					}
+					break;
+
+				case LEFT:
+					Y = currY;
+					X = (rect.left - tileSize) / tileSize;
+					if (!(Map[Y][X] == 'W' || Map[Y][X] == 'w' || Map[Y][X] == '&'))
+					{
+						findPath = false;
+						move[LEFT] = true;
+					}
+					break;
+
+				case RIGHT:
+					Y = currY;
+					X = (rect.left + tileSize) / tileSize;
+					if (!(Map[Y][X] == 'W' || Map[Y][X] == 'w' || Map[Y][X] == '&'))
+					{
+						findPath = false;
+						move[RIGHT] = true;
+					}
+					break;
+				default:
+					break;
+				}
+
+			}
+		}
+	
+	}
+}
+
+
 void Ghost::UpdateMove()
 {
 	if (!walk)
@@ -232,7 +307,7 @@ void Ghost::UpdateMove()
 		if (move[UP])
 		{
 			rect.top -= moveSpead;
-			sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * (int(currentFrame)), SPRITE_RIGHT_Y, rect.width, rect.height)); // animation up from sprite list
+			sprite.setTextureRect(sf::IntRect(spriteXup + SPRITES_SHIFT_DIST * (int(currentFrame)), spriteY, rect.width, rect.height)); // animation up from sprite list
 
 			if (rect.top <= currSpoatTile) // In case if it will go too far -> set in exact position
 			{
@@ -246,7 +321,7 @@ void Ghost::UpdateMove()
 		else if (move[DOWN])
 		{
 			rect.top += moveSpead;
-			sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * (int(currentFrame)), SPRITE_RIGHT_Y, rect.width, rect.height)); // amnimation down from sprite list
+			sprite.setTextureRect(sf::IntRect(spriteXdown + SPRITES_SHIFT_DIST * (int(currentFrame)), spriteY, rect.width, rect.height)); // amnimation down from sprite list
 
 			if (rect.top >= currSpoatTile)
 			{
@@ -259,7 +334,7 @@ void Ghost::UpdateMove()
 		else if (move[LEFT])
 		{
 			rect.left -= moveSpead;
-			sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * (int(currentFrame)) + SPRITE_WIDTH, SPRITE_RIGHT_Y, -rect.width, rect.height)); // animation left (inverse reading of right) from sprite list
+			sprite.setTextureRect(sf::IntRect(spriteXsides + SPRITES_SHIFT_DIST * (int(currentFrame)) + SPRITE_WIDTH, spriteY, -rect.width, rect.height)); // animation left (inverse reading of right) from sprite list
 
 			if (rect.left <= currSpoatTile)
 			{
@@ -272,7 +347,7 @@ void Ghost::UpdateMove()
 		else if (move[RIGHT])
 		{
 			rect.left += moveSpead;
-			sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * (int(currentFrame)), SPRITE_RIGHT_Y, rect.width, rect.height)); // animation right from sprite list
+			sprite.setTextureRect(sf::IntRect(spriteXsides + SPRITES_SHIFT_DIST * (int(currentFrame)), spriteY, rect.width, rect.height)); // animation right from sprite list
 
 			if (rect.left >= currSpoatTile)
 			{
@@ -284,10 +359,17 @@ void Ghost::UpdateMove()
 		}
 
 		// Update animation plases in sprite list. Animate and move only if direction is set
-		currentFrame += 0.10;
-		if (currentFrame >= NUM_OF_WALK_FRAMES) // loop for animation farmes
+		if (!eatenByPacman)
 		{
-			currentFrame -= NUM_OF_WALK_FRAMES;
+			currentFrame += 0.10;
+			if (currentFrame >= NUM_OF_WALK_FRAMES) // loop for animation farmes
+			{
+				currentFrame -= NUM_OF_WALK_FRAMES;
+			}
+		}
+		else if (eatenByPacman)
+		{
+			currentFrame = 0;
 		}
 
 		//update coordinates of Pacman sprite
@@ -295,7 +377,7 @@ void Ghost::UpdateMove()
 	}
 	else
 	{
-		sprite.setTextureRect(sf::IntRect(SPRITE_RIGHT_X, SPRITE_RIGHT_Y, rect.width, rect.height)); // get sprite of pacman when it's not move
+		sprite.setTextureRect(sf::IntRect(spriteXsides, spriteY, rect.width, rect.height)); // get sprite of pacman when it's not move
 	}
 }
 
@@ -308,12 +390,60 @@ void Ghost::CachCheck(int pacX, int pacY, bool &cached)
 	}
 }
 
-
-void Ghost::GhostManager(float PacManX, float PacManY, bool &cached)
+void Ghost::BustMode(int pacX, int pacY, float &timerBust)
 {
-	FindTilesCachPac(PacManX, PacManY); // pass float coordinates of PacMan
-	UpdateMove();
-	CachCheck(PacManX, PacManY, cached);
+	if (isBustMode)
+	{
+		spriteXup = spriteXdown = spriteXsides = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 8;
+
+		if (!eatenByPacman)
+		{
+			if (currX == pacX && currY == pacY) // If they are in the same tile
+			{
+				eatenByPacman = true;
+				
+				// Chainge animation to eaten
+				spriteXup = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 10;
+				spriteXdown = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 11;
+				spriteXsides = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 8;
+				spriteY += SPRITES_SHIFT_DIST; // 1 down
+			}
+		}
+		else
+		{
+			timerDeath += 0.1; // independent counter for death time
+		}
+
+	}
+
+	if (timerBust >= 10 || timerDeath >= 50) // if bust mode or period of death is ower set casual sprite
+	{
+		eatenByPacman = false;
+		timerDeath = 0;
+
+		spriteXup = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 4;
+		spriteXdown = SPRITE_RIGHT_X + SPRITES_SHIFT_DIST * 6;
+		spriteXsides = SPRITE_RIGHT_X;
+		spriteY = SPRITE_RIGHT_Y;
+	}
+}
+
+
+void Ghost::GhostManager(float PacManX, float PacManY, bool &cached, float &timerBust)
+{
+	if (!isBustMode) // timer 10 sec cach PacMan and 3 sec make random movement 
+	{
+		FindTilesCachMod(PacManX, PacManY); // pass float coordinates of PacMan
+		UpdateMove();
+		CachCheck(PacManX, PacManY, cached); // pass int coordinates of PacMan by value (to convert them from float and use operator ==)
+	}
+	else
+	{
+		FindTilesDoNotCachMod();
+		UpdateMove();
+	}
+	
+	BustMode(PacManX, PacManY, timerBust); // here cause gousts can be geath some time after bust mode is over
 }
 
 Ghost::~Ghost()

@@ -34,12 +34,17 @@ bool restartGame()
 
 	PacMan player(pacTexture, "PacMan"); // Create pacman
 
-	Ghost ghost1(pacTexture, "Ghost1"); // Create Ghosts
-	Ghost ghost2(pacTexture, "Ghost2");
+	Ghost ghost[2] = {
+		Ghost (pacTexture, "Ghost1"), // Create Ghosts
+		Ghost (pacTexture, "Ghost2")
+	};
 
 	Exit exit(pacTexture, "Exit"); // Create exit key and end screeans
 
 	sf::RectangleShape rectangle(sf::Vector2f(tileSize, tileSize)); //rectangles which have size of map tiles
+	
+	sf::Clock clockB;
+	float timerBust;
 
 	while (window.isOpen())
 	{
@@ -52,13 +57,18 @@ bool restartGame()
 			}
 		}
 
+		timerBust = clockB.getElapsedTime().asSeconds();
+
 		// If player isn't dead and have not won yet
 		if (!player.cached && !player.win)
 		{
-			player.Update(); //get user input, moving pacman and portals handling
+			player.Update(clockB, timerBust); //get user input, moving pacman and portals handling
 
-			ghost1.GhostManager(player.currX, player.currY, player.cached); //// Set next ditection, move and check if the PacMan is cached by ghosts 
-			ghost2.GhostManager(player.currX, player.currY, player.cached);
+			int elementsInArray = sizeof(ghost) / sizeof(ghost[0]);
+			for (int i = 0; i < elementsInArray; i++)
+			{
+				ghost[i].GhostManager(player.currX, player.currY, player.cached, timerBust); //// Set next ditection, move and check if the PacMan is cached by all ghosts 
+			}
 
 			window.clear(sf::Color::Black);
 			window.draw(map.sprite); // Draw map
@@ -72,8 +82,11 @@ bool restartGame()
 			}
 
 			window.draw(player.sprite); // Draw PacMan
-			window.draw(ghost1.sprite); // Draw Ghost
-			window.draw(ghost2.sprite); // Draw Ghost
+			
+			for (int i = 0; i < elementsInArray; i++)
+			{
+				window.draw(ghost[i].sprite); // Draw all Ghosts
+			}
 			window.display();
 		}
 		else // if win or lose

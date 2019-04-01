@@ -28,7 +28,8 @@ private:
 	void GetDirection(); //PacMan control
 	void CheckForFuturePath();
 	void Collision();
-	void GetPillsAndPortals();
+	void GetPillsAndPortals(sf::Clock &timerBust);
+	void BustTimerUpdate(float &timerBust);
 
 public:
 	// if the Pacman is cached;
@@ -40,7 +41,7 @@ public:
 	PacMan(sf::Texture &image, std::string name);
 
 	///public Methods//
-	void Update(); // Include other methods
+	void Update(sf::Clock &clockB, float &time); // Include other methods
 	void AnimationDeath();
 
 	~PacMan();
