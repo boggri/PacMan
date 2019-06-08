@@ -3,7 +3,7 @@ PacMan game.
 
 Made with SFML libs. Compiled on Visual Studio 2015. The game is written on C++.
 
-If you lose or win just press spase to restart the game. Compiled game is in directory ```exe/```
+If you lose or win just press spase to restart the game. Compiled game for Windows X86 is in directory ```exe/```
 
 #To do: 
 - rewrite copypast in finctions  ```FindTilesCachMod``` to make sourse code DRY and simplify the logic.
